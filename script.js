@@ -1,5 +1,5 @@
-// Flashcard data with 25 clean, thought-provoking cards
-let cards = [
+// Flashcard data - 25 clean, thought-provoking cards without political or religious content
+const cards = [
   {
     question: "Explain why the sky appears blue during the day.",
     answer: "Because air molecules scatter blue light more than other colors due to Rayleigh scattering.",
@@ -152,10 +152,10 @@ let cards = [
   }
 ];
 
-// Track current card and flip state
+// Keep track of current card index
 let currentIndex = 0;
 
-// DOM elements
+// Grab DOM elements
 const cardContainer = document.getElementById("card-container");
 const toggleDarkBtn = document.getElementById("toggleDark");
 const prevBtn = document.getElementById("prevCard");
@@ -167,15 +167,17 @@ const modal = document.getElementById("modal");
 const closeModalBtn = document.getElementById("closeModal");
 const addCardForm = document.getElementById("addCardForm");
 
-// Create progress display
+// Create and insert progress display element right below the card container
 const progressDisplay = document.createElement("div");
+progressDisplay.id = "progressDisplay";
 progressDisplay.className = "mt-2 text-center text-gray-700 dark:text-gray-300 font-semibold";
 cardContainer.parentNode.insertBefore(progressDisplay, cardContainer.nextSibling);
 
-// Create flashcard element with flip
+// Function to create a single flashcard element with flipping functionality
 function createFlashcard(card) {
   const flipCard = document.createElement("div");
   flipCard.className = "flip-card";
+  flipCard.setAttribute("tabindex", "0"); // Make card focusable for keyboard users
 
   const flipInner = document.createElement("div");
   flipInner.className = "flip-card-inner";
@@ -196,14 +198,13 @@ function createFlashcard(card) {
   flipInner.appendChild(back);
   flipCard.appendChild(flipInner);
 
-  // Flip on click
+  // Toggle flip on click
   flipCard.addEventListener("click", () => {
     flipCard.classList.toggle("flipped");
   });
 
-  // Keyboard flip on Enter/Space
-  flipCard.tabIndex = 0;
-  flipCard.addEventListener("keydown", e => {
+  // Keyboard accessibility: flip on Enter or Space key
+  flipCard.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       flipCard.classList.toggle("flipped");
@@ -213,74 +214,87 @@ function createFlashcard(card) {
   return flipCard;
 }
 
-// Render card by index
+// Render card by current index
 function renderCard(index) {
   cardContainer.innerHTML = "";
+
   if (cards.length === 0) {
     cardContainer.textContent = "No cards available.";
     progressDisplay.textContent = "";
     return;
   }
-  const cardElem = createFlashcard(cards[index]);
+
+  // Make sure index is within bounds
+  currentIndex = ((index % cards.length) + cards.length) % cards.length;
+
+  const cardElem = createFlashcard(cards[currentIndex]);
   cardContainer.appendChild(cardElem);
   updateProgress();
 }
 
-// Update progress display
+// Update progress display (e.g., "Card 1 of 25")
 function updateProgress() {
   progressDisplay.textContent = `Card ${currentIndex + 1} of ${cards.length}`;
 }
 
-// Navigation handlers
-prevBtn.onclick = () => {
+// Button handlers for navigation
+prevBtn.addEventListener("click", () => {
   currentIndex = (currentIndex - 1 + cards.length) % cards.length;
   renderCard(currentIndex);
-};
+});
 
-nextBtn.onclick = () => {
+nextBtn.addEventListener("click", () => {
   currentIndex = (currentIndex + 1) % cards.length;
   renderCard(currentIndex);
-};
+});
 
 // Shuffle cards randomly
-shuffleBtn.onclick = () => {
-  cards = cards.sort(() => Math.random() - 0.5);
+shuffleBtn.addEventListener("click", () => {
+  // Simple Fisher-Yates shuffle for better randomness
+  for (let i = cards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [cards[i], cards[j]] = [cards[j], cards[i]];
+  }
   currentIndex = 0;
   renderCard(currentIndex);
-};
+});
 
-// Focus mode toggle - hide/show controls except card & progress
-focusBtn.onclick = () => {
+// Focus mode toggle: hide controls except card & progress
+focusBtn.addEventListener("click", () => {
   const controls = [prevBtn, nextBtn, shuffleBtn, focusBtn, openModalBtn, toggleDarkBtn];
-  controls.forEach(btn => btn.classList.toggle("hidden"));
-};
+  controls.forEach((btn) => btn.classList.toggle("hidden"));
+});
 
-// Dark mode toggle
-toggleDarkBtn.onclick = () => {
+// Dark mode toggle: toggles 'dark' class on body and updates button text
+toggleDarkBtn.addEventListener("click", () => {
   document.body.classList.toggle("dark");
   toggleDarkBtn.textContent = document.body.classList.contains("dark") ? "Light Mode" : "Dark Mode";
-};
+});
 
 // Modal open/close handlers
-openModalBtn.onclick = () => {
+openModalBtn.addEventListener("click", () => {
   modal.classList.remove("hidden");
-};
+  // Optional: set focus to first input when modal opens
+  document.getElementById("frontInput").focus();
+});
 
-closeModalBtn.onclick = () => {
+closeModalBtn.addEventListener("click", () => {
   modal.classList.add("hidden");
   addCardForm.reset();
-};
+});
 
-window.onclick = e => {
+// Close modal on clicking outside modal content
+window.addEventListener("click", (e) => {
   if (e.target === modal) {
     modal.classList.add("hidden");
     addCardForm.reset();
   }
-};
+});
 
-// Add new card form submit
-addCardForm.onsubmit = e => {
+// Add new card form submission
+addCardForm.addEventListener("submit", (e) => {
   e.preventDefault();
+
   const question = document.getElementById("frontInput").value.trim();
   const answer = document.getElementById("backInput").value.trim();
   const difficulty = document.getElementById("difficultyInput").value;
@@ -295,10 +309,11 @@ addCardForm.onsubmit = e => {
   cards.push({ question, answer, tag, difficulty });
   modal.classList.add("hidden");
   addCardForm.reset();
+
+  // Show the newly added card immediately
   currentIndex = cards.length - 1;
   renderCard(currentIndex);
-};
+});
 
-// Initialize first card
+// Initialize by rendering the first card
 renderCard(currentIndex);
-

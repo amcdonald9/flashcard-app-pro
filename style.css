@@ -9,14 +9,82 @@
   display: flex;
 }
 
-/* Flip card shadow and hover effect */
+/* Flip card container */
 .flip-card {
   max-width: 400px;
   margin: 0 auto;
+  perspective: 1000px;
+  cursor: pointer;
+  outline: none; /* We'll add custom focus style */
 }
 
-.flip-card:hover .flip-card-inner {
+/* Flip card inner container */
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  text-align: center;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgb(0 0 0 / 0.1);
+}
+
+/* Flipped state */
+.flip-card.flipped .flip-card-inner {
   transform: rotateY(180deg);
+}
+
+/* Front and back faces */
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 320px;
+  backface-visibility: hidden;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1.5rem;
+  user-select: none;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Front face styling */
+.flip-card-front {
+  background-color: #f9fafb; /* Tailwind gray-50 */
+  color: #111827; /* Tailwind gray-900 */
+  box-shadow: 0 4px 6px rgb(0 0 0 / 0.1);
+  border: 1px solid #e5e7eb; /* Tailwind gray-200 */
+}
+
+/* Back face styling */
+.flip-card-back {
+  background-color: #111827; /* Tailwind gray-900 */
+  color: #f9fafb; /* Tailwind gray-50 */
+  transform: rotateY(180deg);
+  border: 1px solid #374151; /* Tailwind gray-700 */
+}
+
+/* Dark mode front/back overrides */
+body.dark .flip-card-front {
+  background-color: #1f2937; /* Tailwind gray-800 */
+  color: #f9fafb; /* Tailwind gray-50 */
+  border-color: #374151; /* Tailwind gray-700 */
+}
+
+body.dark .flip-card-back {
+  background-color: #374151; /* Tailwind gray-700 */
+  color: #f9fafb; /* Tailwind gray-50 */
+  border-color: #4b5563; /* Tailwind gray-600 */
+}
+
+/* Hover flip on desktop only */
+@media (hover: hover) and (pointer: fine) {
+  .flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
+  }
 }
 
 /* Disable hover flip on small screens */
@@ -26,26 +94,60 @@
   }
 }
 
+/* Focus styles for accessibility */
+.flip-card:focus {
+  outline: 3px solid #2563eb; /* Tailwind blue-600 */
+  outline-offset: 3px;
+  box-shadow: 0 0 5px 2px rgba(59, 130, 246, 0.7);
+}
+
 /* Smooth button transitions */
 button {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Focus styles for accessibility */
-.flip-card:focus {
-  outline: 3px solid #2563eb; /* Tailwind blue-600 */
-  outline-offset: 2px;
-}
-
-/* Scrollbar hidden for modal content if needed */
+/* Modal content scrolling */
 #modal > div {
   max-height: 80vh;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.7) transparent;
 }
 
-/* Responsive tweaks */
+/* Scrollbar styles for WebKit browsers */
+#modal > div::-webkit-scrollbar {
+  width: 8px;
+}
+
+#modal > div::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.7);
+  border-radius: 4px;
+}
+
+#modal > div::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Responsive container tweaks */
 @media (max-width: 640px) {
   #card-container {
     max-width: 90vw;
   }
+}
+
+/* Progress display styling */
+#progressDisplay {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+/* Buttons focus ring */
+button:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Utility: hide elements */
+.hidden {
+  display: none !important;
 }
