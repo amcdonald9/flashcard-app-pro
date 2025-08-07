@@ -1,0 +1,51 @@
+/* Modal visibility and centering */
+#modal {
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+#modal:not(.hidden) {
+  display: flex;
+}
+
+/* Flip card shadow and hover effect */
+.flip-card {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+/* Disable hover flip on small screens */
+@media (max-width: 640px) {
+  .flip-card:hover .flip-card-inner {
+    transform: none !important;
+  }
+}
+
+/* Smooth button transitions */
+button {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Focus styles for accessibility */
+.flip-card:focus {
+  outline: 3px solid #2563eb; /* Tailwind blue-600 */
+  outline-offset: 2px;
+}
+
+/* Scrollbar hidden for modal content if needed */
+#modal > div {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Responsive tweaks */
+@media (max-width: 640px) {
+  #card-container {
+    max-width: 90vw;
+  }
+}
