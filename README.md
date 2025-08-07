@@ -25,7 +25,7 @@ All designed with a responsive layout for desktop and mobile.
 
 ## Demo
 
-👉 [Add your live demo link here after publishing on GitHub Pages]
+👉 [(https://amcdonald9.github.io/flashcard-app-pro/)]
 
 ## Installation / Running Locally
 
